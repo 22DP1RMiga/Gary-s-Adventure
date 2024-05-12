@@ -4,19 +4,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-// BOSS #3 - Meet Frederick
-class Frederick {
+// BOSS #2 - Meet Jeremy
+class Jeremy {
     
     // for the main character
     private User user;
     private string checkpoint;
     private int AttackCount;
     private string filePath;
+    private int LossCount;
     
     // temporary data in case you lose
     private int temp_HP;
     private int temp_Credits;
     private int temp_Strength;
+    private int temp_DamageMinimizer;
     
     // for the boss
     private int BOSS_HP;
@@ -24,14 +26,15 @@ class Frederick {
     public bool isDefeated;
     public int DamageMinimizer;
     
-    public Frederick(User user, bool isDefeated, string CHECKPOINT, string filePath) {
+    public Jeremy(User user, bool isDefeated, string CHECKPOINT, string filePath) {
         this.user = user;
         this.checkpoint = CHECKPOINT;
         this.filePath = filePath;
         DamageMinimizer += this.user.DamageMinimizer;
+        this.LossCount = this.user.LossCount;
         
-        this.BOSS_HP = 200;
-        this.BOSS_strength = 40 - DamageMinimizer;
+        this.BOSS_HP = 150;
+        this.BOSS_strength = 20 - DamageMinimizer;
         this.isDefeated = isDefeated;
         this.AttackCount = 0;
         
@@ -40,7 +43,7 @@ class Frederick {
         this.temp_Strength = this.user.Strength;
     }
     
-    public void Bossfight_3() {
+    public void Bossfight_2() {
 
         // Objects and Constructors
         Menu menu = new Menu(this.user, this.checkpoint, filePath);
@@ -52,6 +55,8 @@ class Frederick {
             int parsedHP;
             int parsedCredits;
             int parsedStrength;
+            int parsedDamageMinimizer;
+
             if (int.TryParse(currentUserData[2], out parsedHP)) {
                 user.HP = parsedHP;
                 temp_HP = user.HP;
@@ -64,38 +69,42 @@ class Frederick {
                 user.Strength = parsedStrength;
                 temp_Strength = user.Strength;
             }
+            if (int.TryParse(currentUserData[5], out parsedDamageMinimizer)) {
+                user.DamageMinimizer = parsedDamageMinimizer;
+                temp_DamageMinimizer = user.DamageMinimizer;
+            }
         }
     
         Console.Clear();
         string BossStage1 = "";
         
-        // While Frederick ISN'T defeated
+        // While Jeremy ISN'T defeated
         while (BOSS_HP > 0 && this.isDefeated == false) {
             Console.Clear();
             
             BossStage1 = $@"
         ╔══════════════════════════════════════════════════════════════════════════╗
         ║   Credits: {user.Credits,-4}                                                          ║
-        ║   HP: {user.HP,-3}/100                        HP: {BOSS_HP,-3}/200                         ║
+        ║   HP: {user.HP,-3}/100                        HP: {BOSS_HP,-3}/150                         ║
         ║                                                                          ║
-        ║         ____                                                             ║
-        ║        |    |                               ____                         ║
-        ║      __|    |__                          __/    \__                      ║
-        ║     [          ]                        /__________\                     ║
+        ║         ____                                 /\                          ║
+        ║        |    |                               /  \                         ║
+        ║      __|    |__                            /    \                        ║
+        ║     [          ]                          /      \                       ║
         ║      /‾‾‾‾‾‾‾‾\                          /‾‾‾‾‾‾‾‾\                      ║
-        ║     |   0   0  |                        |  $  $    |                     ║
-        ║     |     ?    |                        |    <     |                     ║
+        ║     |   0   0  |                        |  T  T    |                     ║
+        ║     |     ?    |                        |    ?     |                     ║
         ║     |  .___    |                        |   ―――.   |                     ║
         ║      \________/                          \________/                      ║
-        ║          |                                   ||                          ║
+        ║          |                                   |                           ║
         ║    /‾‾‾‾‾‾‾‾‾‾‾\                       /‾‾‾‾‾‾‾‾‾‾‾\                     ║
         ║   / /|       |\ \                     / /|       |\ \                    ║
         ║   || |       | ||                     || |       | ||                    ║
         ║   || |       | ||                     || |       | ||                    ║
         ║   () |       | ()                     () |       | ()                    ║
         ║==========================================================================║
-        ║ Name: Gary                        | Name: Frederick                      ║
-        ║ {user.HP,-3}/100 HP                        | {BOSS_HP,-3}/200 HP                           ║
+        ║ Name: Gary                        | Name: Jeremy                         ║
+        ║ {user.HP,-3}/100 HP                        | {BOSS_HP,-3}/150 HP                           ║
         ║                                   |                                      ║
         ║ Strength:                         | Strength:                            ║
         ║ {user.Strength,-2} per damage                     | {BOSS_strength,-2} per damage                        ║
@@ -155,11 +164,11 @@ class Frederick {
         user.HP -= BOSS_strength;
         
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"\nYou attacked FREDERICK!! His HP dropped by {user.Strength}");
+        Console.WriteLine($"\nYou attacked JEREMY!! His HP dropped by {user.Strength}");
         Thread.Sleep(1500);
         
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"FREDERICK gives you -{BOSS_strength} damage");
+        Console.WriteLine($"JEREMY gives you -{BOSS_strength} damage");
         Thread.Sleep(2000);
         
         Console.ResetColor();
@@ -173,11 +182,11 @@ class Frederick {
         user.HP -= BOSS_strength;
         
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"\nYou attacked FREDERICK!! His HP dropped by {user.Strength}");
+        Console.WriteLine($"\nYou attacked JEREMY!! His HP dropped by {user.Strength}");
         Thread.Sleep(1500);
         
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"FREDERICK gives you -{BOSS_strength} damage");
+        Console.WriteLine($"JEREMY gives you -{BOSS_strength} damage");
         Thread.Sleep(2000);
         
         user.Strength = user.Strength / 2;
@@ -191,23 +200,24 @@ class Frederick {
         Console.Clear();
         
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("You defeated FREDERICK");
+        Console.WriteLine("You defeated JEREMY");
         Thread.Sleep(1000);
-        Console.WriteLine("You have earned 150 credits!!");
+        Console.WriteLine("You have earned 100 credits!!");
         Thread.Sleep(2000);
         Console.WriteLine("Good luck on your next journey!");
         Console.ResetColor();
         Thread.Sleep(1500);
         
         // After beating the boss
-        this.user.Credits += 150;
+        // Updates user's Credits before writing to CSV
+        this.user.Credits += 100;
         
         // File path for CSV
         string filePath = "data.csv";
         
         // This will work if only Douglas is defeated
-        if (this.checkpoint == "RAHG") {
-            this.checkpoint = "TRMX";
+        if (this.checkpoint == "GTFO") {
+            this.checkpoint = "RAHG";
         }
         
         // Updates user's HP and Credits in the CSV data
@@ -218,34 +228,31 @@ class Frederick {
         List<string[]> new_userData = new List<string[]> {
             new string[] { this.user.Username, this.user.Checkpoint, this.user.HP.ToString(), this.user.Credits.ToString(), this.user.Strength.ToString(), this.user.DamageMinimizer.ToString() }
         };
-
+        
         // Temporary variables to hold HP and Credits values
         int tempHP = user.HP;
         int tempCredits = user.Credits;
         int tempStrength = user.Strength;
-
+        
         // Write updated data back to CSV
-        userData.RemoveAll(row => row[0] == user.Username); // Remove previous data
-        WriteToCSV(filePath, new_userData);
-    
-        // Update user's HP and Credits after writing to CSV
-        user.Credits += 150;
+        UpdateInCSV();
+        WriteToCSV(user.Username);
     
         PlayMain showmap = new PlayMain(this.user, this.checkpoint, filePath);
         showmap.Boss1Defeated = true;
         showmap.checkpoint = this.checkpoint;
-        
+
         showmap.Play_main();
     }
     
     private void AfterLoss() {
         // The message after losing to the boss
         Console.Clear();
-        
+
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("You were defeated..");
         Thread.Sleep(1000);
-        Console.WriteLine("FREDERICK remains in his post..");
+        Console.WriteLine("Jeremy remains in his post..");
         Thread.Sleep(2000);
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("25 CREDITS compensated for losing");
@@ -253,21 +260,29 @@ class Frederick {
         Console.WriteLine("Better luck next time!");
         Thread.Sleep(1500);
         Console.ResetColor();
-        
+
         // After losing to the boss
         this.user.HP = temp_HP;
         this.user.Credits += 25;
-        BOSS_HP = 200;
+        BOSS_HP = 150;
         AttackCount = 0;
-        
-        PlayMain showmap = new PlayMain(this.user, this.checkpoint, filePath);
+        this.user.DamageMinimizer = temp_DamageMinimizer;
+        this.LossCount += 1;
+        UpdateInCSV();
+
+        PlayMain showmap = new PlayMain(this.user, this.checkpoint, this.filePath);
         showmap.Play_main();
     }
     
-    void WriteToCSV(string filePath, List<string[]> data) {
-        using (StreamWriter writer = new StreamWriter(filePath)) {
-            foreach (string[] row in data) {
-                writer.WriteLine(string.Join(",", row));
+    // Writes user data in CSV
+    private void WriteToCSV(string username) {
+        // Check if the username already exists in the CSV file
+        bool userExists = File.ReadLines(filePath).Any(line => line.Split(',')[0] == username);
+
+        // If the user does not exist, write the data to the CSV file
+        if (!userExists) {
+            using (StreamWriter writer = new StreamWriter(filePath, true)) {
+                writer.WriteLine($"{username},{checkpoint},{user.HP},{user.Credits},{user.Strength},{user.DamageMinimizer},{user.LossCount}");
             }
         }
     }
@@ -285,5 +300,34 @@ class Frederick {
             }
         }
         return data;
+    }
+
+    // Updates user data in CSV
+    private void UpdateInCSV() {
+        // Read existing user data from CSV
+        List<string[]> userData = ReadFromCSV(filePath);
+
+        // Find the index of the row that corresponds to the current user
+        int index = userData.FindIndex(row => row[0] == user.Username);
+
+        // If the user data exists in the CSV file
+        if (index != -1) {
+            // Update the existing user data
+            userData[index][2] = user.HP.ToString(); // HP
+            userData[index][3] = user.Credits.ToString(); // Credits
+            userData[index][4] = user.Strength.ToString(); // Strength
+            userData[index][5] = user.DamageMinimizer.ToString(); // DamageMinimizer
+            userData[index][6] = user.LossCount.ToString(); // LossCount
+        } else {
+            // Add new user data if not found (this should not happen if the user data is properly initialized)
+            userData.Add(new string[] { user.Username, user.Checkpoint, user.HP.ToString(), user.Credits.ToString(), user.Strength.ToString(), user.DamageMinimizer.ToString(), user.LossCount.ToString() });
+        }
+
+        // Write updated data back to CSV
+        using (StreamWriter writer = new StreamWriter(filePath)) {
+            foreach (string[] row in userData) {
+                writer.WriteLine(string.Join(",", row));
+            }
+        }
     }
 }

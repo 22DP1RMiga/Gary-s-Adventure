@@ -31,6 +31,7 @@ class PlayMain {
         
         string player_HP = $"{this.user.HP} HP";
         string player_CREDITS = $"{this.user.Credits} CREDITS";
+        string player_LOSSCOUNT = $"{this.user.LossCount} LOSSCOUNT";
         
         Console.WriteLine("PLEASE STAND BY: WE ARE CHECKING YOUR CHECKPOINT");
         Thread.Sleep(4000);
@@ -51,7 +52,7 @@ class PlayMain {
                 // string player_HP = $"{this.user.HP} HP";
                 // string player_CREDITS = $"{this.user.Credits} CREDITS";
                 
-                Console.WriteLine($"{this.user.Username}:   {player_HP},  {player_CREDITS}");
+                Console.WriteLine($"{this.user.Username}:   {player_HP},  {player_CREDITS},    {player_LOSSCOUNT}");
                 Console.Write("[YOU] ");
                 string startAnswer = Console.ReadLine().ToLower();
                 
@@ -60,7 +61,7 @@ class PlayMain {
                     Console.Clear();
                     ShowMap();
                     
-                    Console.WriteLine($"{this.user.Username}:   {player_HP},  {player_CREDITS}");
+                    Console.WriteLine($"{this.user.Username}:   {player_HP},  {player_CREDITS},    {player_LOSSCOUNT}");
                     Console.Write("[YOU] ");
                     startAnswer = Console.ReadLine().ToLower();
                 }

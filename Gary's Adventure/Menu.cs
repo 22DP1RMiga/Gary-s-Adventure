@@ -12,15 +12,12 @@ class Menu {
     public Menu(User mainCharacter, string Checkpoint, string filePath) {
         this.mainCharacter = mainCharacter;
         this.checkpoint = Checkpoint;
-        this.filePath = filePath;
+        this.filePath = "data.csv";
     }
     
     public void ShowMenu(string username) {
-        // File path for CSV
-        string filePath = "data.csv";
-        
         // Writes user data to CSV
-        WriteUserDataToCSV(username);
+        WriteToCSV(username);
         
         string Menu1 = @"
         ____
@@ -53,7 +50,7 @@ class Menu {
      \________/         > Shop [S]
          |              > Exit [E]
    /‾‾‾‾‾‾‾‾‾‾‾\
-  / /|       |\ \
+  / /|       |\ \       > LEADERBOARD [L]
   || |       | ||
   || |       | ||
   () |       | ()
@@ -61,8 +58,9 @@ class Menu {
 ";
         
         // Objects and Constructors
-        Shop shop = new Shop(mainCharacter, checkpoint, filePath);
+        Shop shop = new Shop(mainCharacter, checkpoint, this.filePath);
         PlayMain play = new PlayMain(mainCharacter, checkpoint, this.filePath);
+        Leaderboard leaderboard = new Leaderboard(mainCharacter, checkpoint, this.filePath);
         
         // Output the first frame
         Console.WriteLine(Menu1);
@@ -82,7 +80,7 @@ class Menu {
         string input = Console.ReadLine().ToLower();
       
         // Checks if your input is valid
-        while (input != "exit" && input != "shop" && input != "play" && input != "e" && input != "s" && input != "p") {
+        while (input != "exit" && input != "shop" && input != "play" && input != "leaderboard" && input != "e" && input != "s" && input != "p" && input != "l") {
             Console.WriteLine("\n<Invalid command, try again>");
             Console.Write("[YOU] ");
             input = Console.ReadLine();
@@ -110,19 +108,25 @@ class Menu {
                 Console.Clear();
                 play.Play_main();
                 break;
+
+            case "leaderboard":
+            case "l":
+                Console.Clear();
+                leaderboard.showLeaderboard();
+                break;
         }
     }
     
-    private void WriteUserDataToCSV(string username) {
-        // Writes user data to CSV
-        List<string[]> userData = new List<string[]> {
-            new string[] {username, checkpoint}
-        };
-        
-        using (StreamWriter writer = new StreamWriter(filePath, true)) {
-            foreach (string[] row in userData) {
-                writer.WriteLine(string.Join(",", row.Concat(new string[] { mainCharacter.HP.ToString(), mainCharacter.Credits.ToString(), mainCharacter.Strength.ToString() })));
+    private void WriteToCSV(string username) {
+        // Check if the username already exists in the CSV file
+        bool userExists = File.ReadLines(filePath).Any(line => line.Split(',')[0] == username);
+
+        // If the user does not exist, write the data to the CSV file
+        if (!userExists) {
+            using (StreamWriter writer = new StreamWriter(filePath, true)) {
+                writer.WriteLine($"{username},{checkpoint},{mainCharacter.HP},{mainCharacter.Credits},{mainCharacter.Strength},{mainCharacter.DamageMinimizer},{mainCharacter.LossCount}");
             }
         }
     }
+
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
@@ -17,7 +16,7 @@ class Program {
 
             // Creates a new CSV file with headers
             List<string[]> initialData = new List<string[]> {
-                new string[] {"Username", "Checkpoint", "HP", "Credits", "Strength", "DamageMinimizer"},
+                new string[] {"Username", "Checkpoint", "HP", "Credits", "Strength", "DamageMinimizer","LossCount"},
             };
             WriteToCSV(filePath, initialData);
         }
@@ -123,18 +122,28 @@ class Program {
         PlayMain play = new PlayMain(mc, checkpoint, filePath);
 
         // Headstart data registration
-        mc.HP = int.Parse(HealthPoints);
-        mc.Credits = int.Parse(credits);
-        mc.Strength = int.Parse(strength);
-        mc.DamageMinimizer = int.Parse(DM);
-        
+        int LossCount;
+
         if (checkpoint == "GTFO") {
             Douglas douglas = new Douglas(mc, true, checkpoint, filePath);
             mc.HP = 20;
             mc.Credits = 50;
             mc.Strength = 20;
             mc.DamageMinimizer = 0;
+
+            // Find the index of the row that corresponds to the current user
+            int index = existingData.FindIndex(row => row[0] == mc.Username);
+
+            if (index != -1) {
+                if (int.TryParse(existingData[index][5], out int losscount)) {
+                    mc.LossCount = losscount;
+                    LossCount = losscount;
+                }
+            }
         }
+
+        // Updates registry
+        UpdateInCSV(mc, existingData);
 
         // Shows Menu
         menu.ShowMenu(username);
@@ -170,5 +179,37 @@ class Program {
             }
         }
         return data;
+    }
+
+    // Updates user data in CSV
+    static void UpdateInCSV(User user, List<string[]> userData) {
+        // File path for CSV
+        string filePath = "data.csv";
+
+        // Read existing user data from CSV
+        userData = ReadFromCSV(filePath);
+
+        // Find the index of the row that corresponds to the current user
+        int index = userData.FindIndex(row => row[0] == user.Username);
+
+        // If the user data exists in the CSV file
+        if (index != -1) {
+            // Update the existing user data
+            userData[index][2] = user.HP.ToString(); // HP
+            userData[index][3] = user.Credits.ToString(); // Credits
+            userData[index][4] = user.Strength.ToString(); // Strength
+            userData[index][5] = user.DamageMinimizer.ToString(); // DamageMinimizer
+            userData[index][6] = user.LossCount.ToString(); // LossCount
+        } else {
+            // Add new user data if not found (this should not happen if the user data is properly initialized)
+            userData.Add(new string[] { user.Username, user.Checkpoint, user.HP.ToString(), user.Credits.ToString(), user.Strength.ToString(), user.DamageMinimizer.ToString(), user.LossCount.ToString() });
+        }
+
+        // Write updated data back to CSV
+        using (StreamWriter writer = new StreamWriter(filePath)) {
+            foreach (string[] row in userData) {
+                writer.WriteLine(string.Join(",", row));
+            }
+        }
     }
 }

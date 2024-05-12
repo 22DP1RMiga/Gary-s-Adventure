@@ -13,6 +13,7 @@ class Douglas
     private string checkpoint;
     private int AttackCount;
     private string filePath;
+    private int LossCount;
 
     // for the boss
     private int BOSS_HP;
@@ -24,6 +25,7 @@ class Douglas
         this.user = user;
         this.checkpoint = CHECKPOINT;
         this.filePath = filePath;
+        this.LossCount = this.user.LossCount;
 
         this.BOSS_HP = 100;
         this.BOSS_strength = 20;
@@ -205,7 +207,8 @@ class Douglas
         };
 
         // Writes updated data back to CSV
-        WriteToCSV(filePath, new_userData);
+        UpdateInCSV();
+        WriteToCSV(user.Username);
 
         PlayMain showmap = new PlayMain(this.user, this.checkpoint, filePath);
         showmap.Boss1Defeated = true;
@@ -233,20 +236,22 @@ class Douglas
         this.user.HP = 100;
         BOSS_HP = 100;
         AttackCount = 0;
+        this.LossCount += 1;
+        UpdateInCSV();
 
         PlayMain showmap = new PlayMain(this.user, this.checkpoint, filePath);
         showmap.Play_main();
     }
 
-    void WriteToCSV(string filePath, List<string[]> data)
-    {
+    // Writes user data in CSV
+    private void WriteToCSV(string username) {
+        // Check if the username already exists in the CSV file
+        bool userExists = File.ReadLines(filePath).Any(line => line.Split(',')[0] == username);
 
-        using (StreamWriter writer = new StreamWriter(filePath))
-        {
-
-            foreach (string[] row in data)
-            {
-                writer.WriteLine(string.Join(",", row));
+        // If the user does not exist, write the data to the CSV file
+        if (!userExists) {
+            using (StreamWriter writer = new StreamWriter(filePath, true)) {
+                writer.WriteLine($"{username},{checkpoint},{user.HP},{user.Credits},{user.Strength},{user.DamageMinimizer},{user.LossCount}");
             }
         }
     }
@@ -267,5 +272,34 @@ class Douglas
             }
         }
         return data;
+    }
+
+    // Updates user data in CSV
+    private void UpdateInCSV() {
+        // Read existing user data from CSV
+        List<string[]> userData = ReadFromCSV(filePath);
+
+        // Find the index of the row that corresponds to the current user
+        int index = userData.FindIndex(row => row[0] == user.Username);
+
+        // If the user data exists in the CSV file
+        if (index != -1) {
+            // Update the existing user data
+            userData[index][2] = user.HP.ToString(); // HP
+            userData[index][3] = user.Credits.ToString(); // Credits
+            userData[index][4] = user.Strength.ToString(); // Strength
+            userData[index][5] = user.DamageMinimizer.ToString(); // DamageMinimizer
+            userData[index][6] = user.LossCount.ToString(); // LossCount
+        } else {
+            // Add new user data if not found (this should not happen if the user data is properly initialized)
+            userData.Add(new string[] { user.Username, user.Checkpoint, user.HP.ToString(), user.Credits.ToString(), user.Strength.ToString(), user.DamageMinimizer.ToString(), user.LossCount.ToString() });
+        }
+
+        // Write updated data back to CSV
+        using (StreamWriter writer = new StreamWriter(filePath)) {
+            foreach (string[] row in userData) {
+                writer.WriteLine(string.Join(",", row));
+            }
+        }
     }
 }

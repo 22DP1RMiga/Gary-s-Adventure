@@ -12,11 +12,13 @@ class Asenath {
     private string checkpoint;
     private int AttackCount;
     private string filePath;
+    private int LossCount;
     
     // temporary data in case you lose
     private int temp_HP;
     private int temp_Credits;
     private int temp_Strength;
+    private int temp_DamageMinimizer;
     
     // for the boss
     private int BOSS_HP;
@@ -29,6 +31,7 @@ class Asenath {
         this.checkpoint = CHECKPOINT;
         this.filePath = filePath;
         DamageMinimizer += this.user.DamageMinimizer;
+        this.LossCount = this.user.LossCount;
         
         this.BOSS_HP = 350;
         this.BOSS_strength = 40 - DamageMinimizer;
@@ -52,6 +55,8 @@ class Asenath {
             int parsedHP;
             int parsedCredits;
             int parsedStrength;
+            int parsedDamageMinimizer;
+
             if (int.TryParse(currentUserData[2], out parsedHP)) {
                 user.HP = parsedHP;
                 temp_HP = user.HP;
@@ -63,6 +68,10 @@ class Asenath {
             if (int.TryParse(currentUserData[4], out parsedStrength)) {
                 user.Strength = parsedStrength;
                 temp_Strength = user.Strength;
+            }
+            if (int.TryParse(currentUserData[5], out parsedDamageMinimizer)) {
+                user.DamageMinimizer = parsedDamageMinimizer;
+                temp_DamageMinimizer = user.DamageMinimizer;
             }
         }
     
@@ -225,8 +234,8 @@ class Asenath {
         int tempStrength = user.Strength;
 
         // Write updated data back to CSV
-        userData.RemoveAll(row => row[0] == user.Username); // Remove previous data
-        WriteToCSV(filePath, new_userData);
+        UpdateInCSV();
+        WriteToCSV(user.Username);
     
         // Update user's HP and Credits after writing to CSV
         user.Credits += 200;
@@ -234,7 +243,7 @@ class Asenath {
         PlayMain showmap = new PlayMain(this.user, this.checkpoint, filePath);
         showmap.Boss1Defeated = true;
         showmap.checkpoint = this.checkpoint;
-        
+
         showmap.Play_main();
     }
     
@@ -259,15 +268,23 @@ class Asenath {
         this.user.Credits += 25;
         BOSS_HP = 350;
         AttackCount = 0;
-        
+        this.user.DamageMinimizer = temp_DamageMinimizer;
+        this.LossCount += 1;
+        UpdateInCSV();
+
         PlayMain showmap = new PlayMain(this.user, this.checkpoint, filePath);
         showmap.Play_main();
     }
     
-    void WriteToCSV(string filePath, List<string[]> data) {
-        using (StreamWriter writer = new StreamWriter(filePath)) {
-            foreach (string[] row in data) {
-                writer.WriteLine(string.Join(",", row));
+    // Writes user data in CSV
+    private void WriteToCSV(string username) {
+        // Check if the username already exists in the CSV file
+        bool userExists = File.ReadLines(filePath).Any(line => line.Split(',')[0] == username);
+
+        // If the user does not exist, write the data to the CSV file
+        if (!userExists) {
+            using (StreamWriter writer = new StreamWriter(filePath, true)) {
+                writer.WriteLine($"{username},{checkpoint},{user.HP},{user.Credits},{user.Strength},{user.DamageMinimizer},{user.LossCount}");
             }
         }
     }
@@ -285,5 +302,34 @@ class Asenath {
             }
         }
         return data;
+    }
+
+    // Updates user data in CSV
+    private void UpdateInCSV() {
+        // Read existing user data from CSV
+        List<string[]> userData = ReadFromCSV(filePath);
+
+        // Find the index of the row that corresponds to the current user
+        int index = userData.FindIndex(row => row[0] == user.Username);
+
+        // If the user data exists in the CSV file
+        if (index != -1) {
+            // Update the existing user data
+            userData[index][2] = user.HP.ToString(); // HP
+            userData[index][3] = user.Credits.ToString(); // Credits
+            userData[index][4] = user.Strength.ToString(); // Strength
+            userData[index][5] = user.DamageMinimizer.ToString(); // DamageMinimizer
+            userData[index][6] = user.LossCount.ToString(); // LossCount
+        } else {
+            // Add new user data if not found (this should not happen if the user data is properly initialized)
+            userData.Add(new string[] { user.Username, user.Checkpoint, user.HP.ToString(), user.Credits.ToString(), user.Strength.ToString(), user.DamageMinimizer.ToString(), user.LossCount.ToString() });
+        }
+
+        // Write updated data back to CSV
+        using (StreamWriter writer = new StreamWriter(filePath)) {
+            foreach (string[] row in userData) {
+                writer.WriteLine(string.Join(",", row));
+            }
+        }
     }
 }
