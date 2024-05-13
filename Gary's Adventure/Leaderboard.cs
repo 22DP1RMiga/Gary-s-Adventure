@@ -23,14 +23,15 @@ class Leaderboard {
 
         // Default leaderboard
         LossCount(users);
-            Console.WriteLine("\n\n CHOOSE:    <LOSS COUNT [LC]>        <STRENGTH [ST]>        <EXIT [E]>");
+            Console.WriteLine("\n\n CHOOSE:    <LOSS COUNT [LC]>        <STRENGTH [ST]>        <CREDITS [C]>        <PROTECTION [PR]>       <EXIT [E]>");
 
         Console.Write("\n[YOU] ");
         string input = Console.ReadLine().ToLower();
 
         // Shows leaderboard if not exiting
         while (input != "exit" && input != "e") {
-            
+            Console.Clear();
+
             if (input == "loss count" || input == "lc") {
                 Console.Clear();
                 LossCount(users);
@@ -38,9 +39,18 @@ class Leaderboard {
             } else if (input == "strength" || input == "st") {
                 Console.Clear();
                 Strength(users);
+
+            } else if (input == "credits" || input == "c") {
+                Console.Clear();
+                Credits(users);
+                
+            } else if (input == "protection" || input == "pr") {
+                Console.Clear();
+                Protection(users);
+                
             }
 
-            Console.WriteLine("\n\n CHOOSE:    <LOSS COUNT [LC]>        <STRENGTH [ST]>        <EXIT [E]>");
+            Console.WriteLine("\n\n CHOOSE:    <LOSS COUNT [LC]>        <STRENGTH [ST]>        <CREDITS [C]>        <PROTECTION [PR]>       <EXIT [E]>");
             Console.Write("\n[YOU] ");
             input = Console.ReadLine().ToLower();
         }
@@ -80,6 +90,38 @@ class Leaderboard {
 
         foreach (var u in sortedUsers) {
             Console.WriteLine($"{rank} - {u.Username} (Strength: {u.Strength})");
+            rank++;
+        }
+    }
+
+    // For Most Credits
+    private void Credits(List<User> users) {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("~~~~~~~~~~~~~~~~LEADERBOARD (WITH MOST CREDITS)~~~~~~~~~~~~~~~~");
+        Console.ResetColor();
+
+        var sortedUsers = users.OrderByDescending(u => u.Credits).ToList();
+
+        int rank = 1;
+
+        foreach (var u in sortedUsers) {
+            Console.WriteLine($"{rank} - {u.Username} ({u.Credits} credits)");
+            rank++;
+        }
+    }
+
+    // For Highest Protection
+    private void Protection(List<User> users) {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("~~~~~~~~~~~~~~~~LEADERBOARD (WITH MOST STRENGTH)~~~~~~~~~~~~~~~~");
+        Console.ResetColor();
+
+        var sortedUsers = users.OrderByDescending(u => u.DamageMinimizer).ToList();
+
+        int rank = 1;
+
+        foreach (var u in sortedUsers) {
+            Console.WriteLine($"{rank} - {u.Username} (+{u.DamageMinimizer})");
             rank++;
         }
     }

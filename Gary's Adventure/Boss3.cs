@@ -19,6 +19,7 @@ class Frederick {
     private int temp_Credits;
     private int temp_Strength;
     private int temp_DamageMinimizer;
+    private int temp_LossCount;
     
     // for the boss
     private int BOSS_HP;
@@ -49,6 +50,7 @@ class Frederick {
         Menu menu = new Menu(this.user, this.checkpoint, filePath);
         
         // Reads user's HP and Credits from the CSV file
+        // Reads user's HP and Credits from the CSV file
         List<string[]> userData = ReadFromCSV(filePath);
         string[] currentUserData = userData.FirstOrDefault(row => row[0] == user.Username);
         if (currentUserData != null && currentUserData.Length >= 4) {
@@ -56,6 +58,7 @@ class Frederick {
             int parsedCredits;
             int parsedStrength;
             int parsedDamageMinimizer;
+            int parsedLossCount;
 
             if (int.TryParse(currentUserData[2], out parsedHP)) {
                 user.HP = parsedHP;
@@ -72,6 +75,10 @@ class Frederick {
             if (int.TryParse(currentUserData[5], out parsedDamageMinimizer)) {
                 user.DamageMinimizer = parsedDamageMinimizer;
                 temp_DamageMinimizer = user.DamageMinimizer;
+            }
+            if (int.TryParse(currentUserData[6], out parsedLossCount)) {
+                user.LossCount = parsedLossCount;
+                temp_LossCount = user.LossCount;
             }
         }
     
@@ -269,6 +276,7 @@ class Frederick {
         BOSS_HP = 200;
         AttackCount = 0;
         this.user.DamageMinimizer = temp_DamageMinimizer;
+        this.user.LossCount = this.LossCount;
         this.LossCount += 1;
         UpdateInCSV();
 

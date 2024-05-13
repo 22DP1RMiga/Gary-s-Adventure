@@ -19,6 +19,7 @@ class Asenath {
     private int temp_Credits;
     private int temp_Strength;
     private int temp_DamageMinimizer;
+    private int temp_LossCount;
     
     // for the boss
     private int BOSS_HP;
@@ -56,6 +57,7 @@ class Asenath {
             int parsedCredits;
             int parsedStrength;
             int parsedDamageMinimizer;
+            int parsedLossCount;
 
             if (int.TryParse(currentUserData[2], out parsedHP)) {
                 user.HP = parsedHP;
@@ -72,6 +74,10 @@ class Asenath {
             if (int.TryParse(currentUserData[5], out parsedDamageMinimizer)) {
                 user.DamageMinimizer = parsedDamageMinimizer;
                 temp_DamageMinimizer = user.DamageMinimizer;
+            }
+            if (int.TryParse(currentUserData[6], out parsedLossCount)) {
+                user.LossCount = parsedLossCount;
+                temp_LossCount = user.LossCount;
             }
         }
     
@@ -269,6 +275,7 @@ class Asenath {
         BOSS_HP = 350;
         AttackCount = 0;
         this.user.DamageMinimizer = temp_DamageMinimizer;
+        this.user.LossCount = this.LossCount;
         this.LossCount += 1;
         UpdateInCSV();
 

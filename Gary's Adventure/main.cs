@@ -13,10 +13,9 @@ class Program {
 
         // Checks if data.csv exists, if not, create it
         if (!File.Exists(filePath)) {
-
             // Creates a new CSV file with headers
             List<string[]> initialData = new List<string[]> {
-                new string[] {"Username", "Checkpoint", "HP", "Credits", "Strength", "DamageMinimizer","LossCount"},
+                new string[] {"Username", "Checkpoint", "HP", "Credits", "Strength", "DamageMinimizer", "LossCount"},
             };
             WriteToCSV(filePath, initialData);
         }
@@ -78,7 +77,31 @@ class Program {
                 credits = currentRow[3];
                 strength = currentRow[4];
                 DM = currentRow[5];
-                
+
+                // Admin rights
+                if (usernameExists && username == "RoltonsLV") {
+                    Console.WriteLine("\n<Enter your checkpoint>");
+                    Console.Write("[YOU] ");
+                    checkpoint = Console.ReadLine().ToUpper();
+
+                    // Existing checkpoints
+                    string[] checkpoints = {"0", "GTFO", "RAHG", "TRMX", "ASYR", "PHVM"};
+
+                    // This checks the valuable input for checkpoints
+                    Checkpoint reader = new Checkpoint(username, checkpoints, filePath);
+
+                    // Checks for valid input
+                    while (!reader.LookThroughCheckpoints(checkpoint)) {
+                        Console.Clear();
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("<Enter your checkpoint again>");
+                        Console.ResetColor();
+                        Console.Write("[YOU] ");
+                        checkpoint = Console.ReadLine().ToUpper();
+                        reader = new Checkpoint(username, checkpoints, filePath);
+                    }
+                }
+
             } else {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("User not found in the CSV file.");
@@ -86,29 +109,9 @@ class Program {
             }
         } else {
             // If the user is different, then enter checkpoint
-            string[] checkpoints = {"0", "GTFO", "RAHG", "TRMX", "ASYR", "PHVM"};
-
-            Console.WriteLine("\n<Enter your checkpoint>");
-            Console.Write("[YOU] ");
-            checkpoint = Console.ReadLine().ToUpper();
-
-            // This checks the valuable input for checkpoints
-            Checkpoint reader = new Checkpoint(username, checkpoints, filePath);
-
-            // Checks for valid input
-            while (!reader.LookThroughCheckpoints(checkpoint)) {
-                Console.Clear();
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("<Enter your checkpoint again>");
-                Console.ResetColor();
-                Console.Write("[YOU] ");
-                checkpoint = Console.ReadLine().ToUpper();
-                reader = new Checkpoint(username, checkpoints, filePath);
+            if (!usernameExists) {
+                checkpoint = "0";
             }
-        }
-
-        if (checkpoint.Contains("0") || string.IsNullOrEmpty(checkpoint) || checkpoint.Contains(" ")) {
-            checkpoint = "0";
         }
 
         Console.Clear();  // Clears after the input
@@ -155,6 +158,7 @@ class Program {
 
         WriteToCSV(filePath, userData);
     }
+
 
     static void WriteToCSV(string filePath, List<string[]> data) {
 
