@@ -2,9 +2,14 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-class Program {
-    
-    static void Main() {
+using System.Text.RegularExpressions;
+
+
+class Program
+{
+
+    static void Main()
+    {
         // Clears all previous text
         Console.Clear();
 
@@ -15,7 +20,8 @@ class Program {
         string filePath = "data.csv";
 
         // Checks if data.csv exists, if not, create it
-        if (!File.Exists(filePath)) {
+        if (!File.Exists(filePath))
+        {
             // Creates a new CSV file with headers
             List<string[]> initialData = new List<string[]> {
                 new string[] {"Username", "Checkpoint", "HP", "Credits", "Strength", "DamageMinimizer", "LossCount"},
@@ -27,12 +33,24 @@ class Program {
         Console.Write("[YOU] ");
         string username = Console.ReadLine();
 
-        // Checks if the username is empty
-        while (string.IsNullOrEmpty(username)) {
+        // Checks if the username is faulty
+        while (string.IsNullOrEmpty(username) || Regex.IsMatch(username, @"^\d+$") || Regex.IsMatch(username, @"[^a-zA-Z0-9]"))
+        {
             Console.Clear();
             ShowStart();
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("<Enter your username again>");
+            
+            Console.Write("<Enter your username again ");
+
+            // Checks if the username is empty or only contains numbers
+            if (string.IsNullOrEmpty(username) || Regex.IsMatch(username, @"^\d+$")) {
+                Console.WriteLine("(cannot be empty or contain only numbers)>");
+
+            // Checks if the username contains any unnecessary characters
+            } else if (Regex.IsMatch(username, @"[^a-zA-Z0-9]")) {
+                Console.WriteLine("(cannot contain any special characters or spaces)>");
+            }
+            
             Console.ResetColor();
             Console.Write("[YOU] ");
             username = Console.ReadLine();
@@ -42,21 +60,27 @@ class Program {
         List<string[]> existingData = ReadFromCSV(filePath);
         bool usernameExists;
         string confirm = "";
-        do {
+        do
+        {
             usernameExists = existingData.Any(row => row[0] == username);
 
-            if (usernameExists) {
-                while (confirm != "yes" && confirm != "y" && confirm != "no" && confirm != "n") {
+            if (usernameExists)
+            {
+                while (confirm != "yes" && confirm != "y" && confirm != "no" && confirm != "n")
+                {
                     Console.Clear();
                     Console.WriteLine($"<Username '{username}' already exists. Are you {username}? (yes/no)");
                     Console.Write("[YOU] ");
                     confirm = Console.ReadLine().ToLower();
                 }
 
-                if (confirm == "yes" || confirm == "y") {
+                if (confirm == "yes" || confirm == "y")
+                {
                     break;
 
-                } else if (confirm == "no" || confirm == "n") {
+                }
+                else if (confirm == "no" || confirm == "n")
+                {
                     Console.Clear();
                     ShowStart();
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -74,11 +98,13 @@ class Program {
         string credits = "";
         string strength = "";
         string DM = "";
-        
-        if (confirm == "yes" || confirm == "y") {
+
+        if (confirm == "yes" || confirm == "y")
+        {
             // If the user is the same person, no need to enter checkpoint
             string[] currentRow = existingData.FirstOrDefault(row => row[0] == username);
-            if (currentRow != null) {
+            if (currentRow != null)
+            {
                 checkpoint = currentRow[1];
                 HealthPoints = currentRow[2];
                 credits = currentRow[3];
@@ -86,19 +112,21 @@ class Program {
                 DM = currentRow[5];
 
                 // Admin rights
-                if (usernameExists && username == "RoltonsLV") {
+                if (usernameExists && username == "RoltonsLV")
+                {
                     Console.WriteLine("\n<Enter your checkpoint>");
                     Console.Write("[YOU] ");
                     checkpoint = Console.ReadLine().ToUpper();
 
                     // Existing checkpoints
-                    string[] checkpoints = {"0", "GTFO", "RAHG", "TRMX", "ASYR", "PHVM"};
+                    string[] checkpoints = { "0", "GTFO", "RAHG", "TRMX", "ASYR", "PHVM" };
 
                     // This checks the valuable input for checkpoints
                     Checkpoint reader = new Checkpoint(username, checkpoints, filePath);
 
                     // Checks for valid input
-                    while (!reader.LookThroughCheckpoints(checkpoint) || checkpoint.Contains(" ")) {
+                    while (!reader.LookThroughCheckpoints(checkpoint) || checkpoint.Contains(" "))
+                    {
                         Console.Clear();
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("<Enter your checkpoint again>");
@@ -109,20 +137,26 @@ class Program {
                     }
                 }
 
-            } else {
+            }
+            else
+            {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("User not found in the CSV file.");
                 Console.ResetColor();
             }
-        } else {
+        }
+        else
+        {
             // If the user is different, then enter checkpoint
-            if (!usernameExists) {
+            if (!usernameExists)
+            {
                 checkpoint = "0";
             }
         }
 
         // Firsthand default value check
-        if (checkpoint == "0" || string.IsNullOrEmpty(checkpoint)) {
+        if (checkpoint == "0" || string.IsNullOrEmpty(checkpoint))
+        {
             checkpoint = "0";
         }
 
@@ -139,7 +173,8 @@ class Program {
         // Headstart data registration
         int LossCount;
 
-        if (checkpoint == "GTFO") {
+        if (checkpoint == "GTFO")
+        {
             Douglas douglas = new Douglas(mc, true, checkpoint, filePath);
             mc.HP = 20;
             mc.Credits = 50;
@@ -149,8 +184,10 @@ class Program {
             // Find the index of the row that corresponds to the current user
             int index = existingData.FindIndex(row => row[0] == mc.Username);
 
-            if (index != -1) {
-                if (int.TryParse(existingData[index][5], out int losscount)) {
+            if (index != -1)
+            {
+                if (int.TryParse(existingData[index][5], out int losscount))
+                {
                     mc.LossCount = losscount;
                     LossCount = losscount;
                 }
@@ -172,24 +209,30 @@ class Program {
     }
 
 
-    static void WriteToCSV(string filePath, List<string[]> data) {
+    static void WriteToCSV(string filePath, List<string[]> data)
+    {
 
-        using (StreamWriter writer = new StreamWriter(filePath)) {
+        using (StreamWriter writer = new StreamWriter(filePath))
+        {
 
-            foreach (string[] row in data) {
-                writer.WriteLine(string.Join(",", row));;
+            foreach (string[] row in data)
+            {
+                writer.WriteLine(string.Join(",", row)); ;
             }
         }
     }
 
-    static List<string[]> ReadFromCSV(string filePath) {
+    static List<string[]> ReadFromCSV(string filePath)
+    {
 
         List<string[]> data = new List<string[]>();
 
-        using (StreamReader reader = new StreamReader(filePath)) {
+        using (StreamReader reader = new StreamReader(filePath))
+        {
             string line;
 
-            while ((line = reader.ReadLine()) != null) {
+            while ((line = reader.ReadLine()) != null)
+            {
                 string[] row = line.Split(',');
                 data.Add(row);
             }
@@ -198,7 +241,8 @@ class Program {
     }
 
     // Updates user data in CSV
-    static void UpdateInCSV(User user, List<string[]> userData) {
+    static void UpdateInCSV(User user, List<string[]> userData)
+    {
         // File path for CSV
         string filePath = "data.csv";
 
@@ -209,18 +253,23 @@ class Program {
         int index = userData.FindIndex(row => row[0] == user.Username);
 
         // If the user data exists in the CSV file
-        if (index != -1) {
+        if (index != -1)
+        {
             // Update the existing user data
-            if (userData[index].Length > 6) { // Check if the array has enough elements
+            if (userData[index].Length > 6)
+            { // Check if the array has enough elements
                 userData[index][1] = user.Checkpoint; // Checkpoint
                 userData[index][2] = user.HP.ToString(); // HP
                 userData[index][3] = user.Credits.ToString(); // Credits
                 userData[index][4] = user.Strength.ToString(); // Strength
                 userData[index][5] = user.DamageMinimizer.ToString(); // DamageMinimizer
                 userData[index][6] = user.LossCount.ToString(); // LossCount
-            } else {
+            }
+            else
+            {
                 // Add new elements to the array to support indexing up to 6
-                while (userData[index].Length <= 6) {
+                while (userData[index].Length <= 6)
+                {
                     userData[index] = userData[index].Concat(new string[] { "" }).ToArray();
                 }
                 // Update the user data
@@ -231,20 +280,25 @@ class Program {
                 userData[index][5] = user.DamageMinimizer.ToString(); // DamageMinimizer
                 userData[index][6] = user.LossCount.ToString(); // LossCount
             }
-        } else {
+        }
+        else
+        {
             // Add new user data if not found (this should not happen if the user data is properly initialized)
             userData.Add(new string[] { user.Username, user.Checkpoint, user.HP.ToString(), user.Credits.ToString(), user.Strength.ToString(), user.DamageMinimizer.ToString(), user.LossCount.ToString() });
         }
 
         // Write updated data back to CSV
-        using (StreamWriter writer = new StreamWriter(filePath)) {
-            foreach (string[] row in userData) {
+        using (StreamWriter writer = new StreamWriter(filePath))
+        {
+            foreach (string[] row in userData)
+            {
                 writer.WriteLine(string.Join(",", row));
             }
         }
     }
 
-    static void ShowStart() {
+    static void ShowStart()
+    {
         string StartScreen = $@"
                                                                                                                   ____
                                                                                                                  |    |
