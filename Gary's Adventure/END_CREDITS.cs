@@ -73,10 +73,10 @@ class EndCredits {
         Thread.Sleep(2500);
         
         Console.WriteLine("\n\n~~~~PLAYTESTERS~~~~");
-        Console.WriteLine("> ");
-        Console.WriteLine("> ");
-        Console.WriteLine("> ");
-        Console.WriteLine("> ");
+        Console.WriteLine("> Shiina Kochiya");
+        Console.WriteLine("> GeneralVN");
+        Console.WriteLine("> TruongWF");
+        Console.WriteLine("> Daniils Onufrijuks");
         
         Thread.Sleep(2500);
         
@@ -90,9 +90,9 @@ class EndCredits {
         Thread.Sleep(2500);
         
         Console.WriteLine("\n\n~~~~HONORABLE MENTIONS~~~~");
-        Console.WriteLine("> ");
-        Console.WriteLine("> ");
-        Console.WriteLine("> ");
+        Console.WriteLine("> RoltonsLV");
+        Console.WriteLine("> RVT audience");
+        Console.WriteLine("> Best IT teachers");
         
         Thread.Sleep(2500);
         

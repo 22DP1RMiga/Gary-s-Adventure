@@ -203,7 +203,7 @@ class Douglas
 
         // Adds updated user data
         List<string[]> new_userData = new List<string[]> {
-            new string[] { this.user.Username, this.user.Checkpoint, this.user.HP.ToString(), this.user.Credits.ToString(), this.user.Strength.ToString(), this.user.DamageMinimizer.ToString() }
+            new string[] { this.user.Username, this.checkpoint, this.user.HP.ToString(), this.user.Credits.ToString(), this.user.Strength.ToString(), this.user.DamageMinimizer.ToString(), this.LossCount.ToString() }
         };
 
         // Writes updated data back to CSV
@@ -237,6 +237,7 @@ class Douglas
         BOSS_HP = 100;
         AttackCount = 0;
         this.LossCount += 1;
+        this.user.LossCount = this.LossCount;
         UpdateInCSV();
 
         PlayMain showmap = new PlayMain(this.user, this.checkpoint, filePath);

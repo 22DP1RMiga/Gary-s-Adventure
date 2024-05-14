@@ -8,6 +8,9 @@ class Program {
         // Clears all previous text
         Console.Clear();
 
+        // Shows start screen
+        ShowStart();
+
         // File path for CSV
         string filePath = "data.csv";
 
@@ -27,6 +30,7 @@ class Program {
         // Checks if the username is empty
         while (string.IsNullOrEmpty(username)) {
             Console.Clear();
+            ShowStart();
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("<Enter your username again>");
             Console.ResetColor();
@@ -54,7 +58,10 @@ class Program {
 
                 } else if (confirm == "no" || confirm == "n") {
                     Console.Clear();
+                    ShowStart();
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("<Enter your username again>");
+                    Console.ResetColor();
                     Console.Write("[YOU] ");
                     username = Console.ReadLine();
                     existingData = ReadFromCSV(filePath);
@@ -91,7 +98,7 @@ class Program {
                     Checkpoint reader = new Checkpoint(username, checkpoints, filePath);
 
                     // Checks for valid input
-                    while (!reader.LookThroughCheckpoints(checkpoint)) {
+                    while (!reader.LookThroughCheckpoints(checkpoint) || checkpoint.Contains(" ")) {
                         Console.Clear();
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("<Enter your checkpoint again>");
@@ -112,6 +119,11 @@ class Program {
             if (!usernameExists) {
                 checkpoint = "0";
             }
+        }
+
+        // Firsthand default value check
+        if (checkpoint == "0" || string.IsNullOrEmpty(checkpoint)) {
+            checkpoint = "0";
         }
 
         Console.Clear();  // Clears after the input
@@ -199,11 +211,24 @@ class Program {
         // If the user data exists in the CSV file
         if (index != -1) {
             // Update the existing user data
-            userData[index][2] = user.HP.ToString(); // HP
-            userData[index][3] = user.Credits.ToString(); // Credits
-            userData[index][4] = user.Strength.ToString(); // Strength
-            userData[index][5] = user.DamageMinimizer.ToString(); // DamageMinimizer
-            userData[index][6] = user.LossCount.ToString(); // LossCount
+            if (userData[index].Length > 6) { // Check if the array has enough elements
+                userData[index][2] = user.HP.ToString(); // HP
+                userData[index][3] = user.Credits.ToString(); // Credits
+                userData[index][4] = user.Strength.ToString(); // Strength
+                userData[index][5] = user.DamageMinimizer.ToString(); // DamageMinimizer
+                userData[index][6] = user.LossCount.ToString(); // LossCount
+            } else {
+                // Add new elements to the array to support indexing up to 6
+                while (userData[index].Length <= 6) {
+                    userData[index] = userData[index].Concat(new string[] { "" }).ToArray();
+                }
+                // Update the user data
+                userData[index][2] = user.HP.ToString(); // HP
+                userData[index][3] = user.Credits.ToString(); // Credits
+                userData[index][4] = user.Strength.ToString(); // Strength
+                userData[index][5] = user.DamageMinimizer.ToString(); // DamageMinimizer
+                userData[index][6] = user.LossCount.ToString(); // LossCount
+            }
         } else {
             // Add new user data if not found (this should not happen if the user data is properly initialized)
             userData.Add(new string[] { user.Username, user.Checkpoint, user.HP.ToString(), user.Credits.ToString(), user.Strength.ToString(), user.DamageMinimizer.ToString(), user.LossCount.ToString() });
@@ -215,5 +240,28 @@ class Program {
                 writer.WriteLine(string.Join(",", row));
             }
         }
+    }
+
+    static void ShowStart() {
+        string StartScreen = $@"
+                                                                                                                  ____
+                                                                                                                 |    |
+                                                                                                               __|    |__
+ __      __       .__                                  __                                                     [          ] 
+/  \    /  \ ____ |  |   ____  ____   _____   ____   _/  |_  ____                                              /‾‾‾‾‾‾‾‾\ 
+\   \/\/   // __ \|  | _/ ___\/  _ \ /     \_/ __ \  \   __\/  _ \                                            |   0   0  |
+ \        /\  ___/|  |_\  \__(  <_> )  Y Y  \  ___/   |  | (  <_> )                                           |     ?    |
+  \__/\  /  \___  >____/\___  >____/|__|_|  /\___  >  |__|  \____/                                            |  .___    |
+       \/       \/          \/            \/     \/                                                            \________/
+  ________                     /\         _____       .___                    __                                   |    
+ /  _____/_____ _______ ___.__.)/_____   /  _  \    __| _/__  __ ____   _____/  |_ __ _________   ____       /‾‾‾‾‾‾‾‾‾‾‾\
+/   \  ___\__  \\_  __ <   |  |/  ___/  /  /_\  \  / __ |\  \/ // __ \ /    \   __\  |  \_  __ \_/ __ \     / /|       |\ \
+\    \_\  \/ __ \|  | \/\___  |\___ \  /    |    \/ /_/ | \   /\  ___/|   |  \  | |  |  /|  | \/\  ___/     || |       | ||
+ \______  (____  /__|   / ____/____  > \____|__  /\____ |  \_/  \___  >___|  /__| |____/ |__|    \___  >    || |       | ||
+        \/     \/       \/         \/          \/      \/           \/     \/                        \/     () |       | ()
+_______________________________________________________________________________________________________________|_______|____________
+        ";
+
+        Console.WriteLine(StartScreen);
     }
 }

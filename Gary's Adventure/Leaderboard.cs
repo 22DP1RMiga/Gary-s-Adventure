@@ -113,7 +113,7 @@ class Leaderboard {
     // For Highest Protection
     private void Protection(List<User> users) {
         Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.WriteLine("~~~~~~~~~~~~~~~~LEADERBOARD (WITH MOST STRENGTH)~~~~~~~~~~~~~~~~");
+        Console.WriteLine("~~~~~~~~~~~~~~~~LEADERBOARD (WITH MOST PROTECTION])~~~~~~~~~~~~~~~~");
         Console.ResetColor();
 
         var sortedUsers = users.OrderByDescending(u => u.DamageMinimizer).ToList();

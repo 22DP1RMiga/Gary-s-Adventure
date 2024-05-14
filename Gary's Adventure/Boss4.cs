@@ -231,7 +231,7 @@ class Asenath {
 
         // Adds updated user data
         List<string[]> new_userData = new List<string[]> {
-            new string[] { this.user.Username, this.user.Checkpoint, this.user.HP.ToString(), this.user.Credits.ToString(), this.user.Strength.ToString(), this.user.DamageMinimizer.ToString() }
+            new string[] { this.user.Username, this.checkpoint, this.user.HP.ToString(), this.user.Credits.ToString(), this.user.Strength.ToString(), this.user.DamageMinimizer.ToString() }
         };
 
         // Temporary variables to hold HP and Credits values
@@ -275,8 +275,8 @@ class Asenath {
         BOSS_HP = 350;
         AttackCount = 0;
         this.user.DamageMinimizer = temp_DamageMinimizer;
-        this.user.LossCount = this.LossCount;
         this.LossCount += 1;
+        this.user.LossCount = this.LossCount;
         UpdateInCSV();
 
         PlayMain showmap = new PlayMain(this.user, this.checkpoint, filePath);
