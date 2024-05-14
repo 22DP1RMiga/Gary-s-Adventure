@@ -212,6 +212,7 @@ class Program {
         if (index != -1) {
             // Update the existing user data
             if (userData[index].Length > 6) { // Check if the array has enough elements
+                userData[index][1] = user.Checkpoint; // Checkpoint
                 userData[index][2] = user.HP.ToString(); // HP
                 userData[index][3] = user.Credits.ToString(); // Credits
                 userData[index][4] = user.Strength.ToString(); // Strength
@@ -223,6 +224,7 @@ class Program {
                     userData[index] = userData[index].Concat(new string[] { "" }).ToArray();
                 }
                 // Update the user data
+                userData[index][1] = user.Checkpoint; // Checkpoint
                 userData[index][2] = user.HP.ToString(); // HP
                 userData[index][3] = user.Credits.ToString(); // Credits
                 userData[index][4] = user.Strength.ToString(); // Strength

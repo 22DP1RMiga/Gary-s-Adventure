@@ -286,6 +286,7 @@ class Douglas
         // If the user data exists in the CSV file
         if (index != -1) {
             // Update the existing user data
+            userData[index][1] = user.Checkpoint; // Checkpoint
             userData[index][2] = user.HP.ToString(); // HP
             userData[index][3] = user.Credits.ToString(); // Credits
             userData[index][4] = user.Strength.ToString(); // Strength
