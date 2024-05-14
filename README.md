@@ -1,3 +1,5 @@
+![Alt Text](GameIntro.png)
+
 # **Gary's Adventure [EN]**
 ### **Made by : Ralfs Migals**
 ---
